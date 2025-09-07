@@ -4,110 +4,90 @@
   <meta charset="UTF-8">
   <title>Gallery</title>
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 0; text-align: center; background: #f9f9f9; }
-    h1 { margin: 20px 0; }
-
-    .gallery-container {
-      position: relative;
-      max-width: 90%;
-      margin: 0 auto;
-    }
-
-    .display img {
-      max-width: 100%;
-      max-height: 500px;
-      margin: 20px auto;
-      border-radius: 8px;
-      transition: opacity 0.5s ease-in-out;
-    }
-
-    .thumbnails {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px;
-      flex-wrap: wrap;
-    }
-
-    .thumbnail {
-      cursor: pointer;
-      border: 2px solid transparent;
-      border-radius: 4px;
-    }
-
-    .thumbnail img {
-      width: 100px;
-      height: auto;
-      border-radius: 4px;
-    }
-
-    .thumbnail.active {
-      border: 3px solid #e67e22;
-      transform: scale(1.05);
-    }
-
-    /* Arrow buttons */
-    .arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      border: none;
-      padding: 15px;
-      font-size: 24px;
-      cursor: pointer;
-      border-radius: 50%;
-      user-select: none;
-    }
-
-    .arrow:hover { background: rgba(0, 0, 0, 0.7); }
-    .arrow.left { left: 10px; }
-    .arrow.right { right: 10px; }
+    body { font-family: Arial, sans-serif; text-align: center; background:#f9f9f9;}
+    h1 { margin-top: 20px; }
+    #display img { max-width: 90%; max-height: 400px; transition: opacity 0.5s ease-in; border-radius: 8px; }
+    #thumbnails { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+    .thumbnail { margin: 5px; cursor: pointer; border: 2px solid transparent; }
+    .thumbnail.active { border-color: #e67e22; }
+    .thumbnail img { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; }
+    .arrow { font-size: 2rem; cursor: pointer; padding: 10px; user-select: none; }
+    .gallery-container { position: relative; display: inline-block; }
+    .arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border:none; border-radius:50%; padding:10px; cursor:pointer; }
+    .arrow-btn:hover { background: rgba(0,0,0,0.7); }
+    .left { left: 0; }
+    .right { right: 0; }
   </style>
 </head>
 <body>
   <h1>Gallery</h1>
   <div class="gallery-container">
-    <div id="display" class="display"></div>
-    <!-- On-screen arrow buttons -->
-    <button class="arrow left" id="prevBtn">&#10094;</button>
-    <button class="arrow right" id="nextBtn">&#10095;</button>
+    <div id="display"></div>
+    <button class="arrow-btn left" id="prevBtn">&#10094;</button>
+    <button class="arrow-btn right" id="nextBtn">&#10095;</button>
   </div>
-  <div id="thumbnails" class="thumbnails"></div>
+  <div id="thumbnails"></div>
 
   <script>
-    let galleryItems = [];
-    let currentIndex = 0;
+    document.addEventListener("DOMContentLoaded", () => {
+      let galleryItems = [];
+      let currentIndex = 0;
 
-    function renderImage(index) {
-      const item = galleryItems[index];
       const display = document.getElementById('display');
+      const thumbnails = document.getElementById('thumbnails');
+      const nextBtn = document.getElementById('nextBtn');
+      const prevBtn = document.getElementById('prevBtn');
 
-      // fade-in effect
-      display.innerHTML = `<img src="${item.src}" alt="${item.title}" style="opacity:0;">`;
-      const img = display.querySelector("img");
-      setTimeout(() => img.style.opacity = 1, 50);
+      function renderImage(index) {
+        const item = galleryItems[index];
+        display.innerHTML = `<img src="${item.src}" alt="${item.title}" style="opacity:0;">`;
+        const img = display.querySelector("img");
+        setTimeout(() => img.style.opacity = 1, 50);
+        currentIndex = index;
 
-      currentIndex = index;
+        document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+          thumb.classList.toggle('active', i === index);
+        });
+      }
 
-      // highlight active thumbnail
-      document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === index);
+      function renderGallery() {
+        thumbnails.innerHTML = "";
+        galleryItems.forEach((item, index) => {
+          const thumb = document.createElement('div');
+          thumb.className = 'thumbnail';
+          thumb.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
+          thumb.onclick = () => renderImage(index);
+          thumbnails.appendChild(thumb);
+        });
+        renderImage(0);
+      }
+
+      function nextImage() {
+        currentIndex = (currentIndex + 1) % galleryItems.length;
+        renderImage(currentIndex);
+      }
+
+      function prevImage() {
+        currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+        renderImage(currentIndex);
+      }
+
+      nextBtn.addEventListener("click", nextImage);
+      prevBtn.addEventListener("click", prevImage);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight") nextImage();
+        if (e.key === "ArrowLeft") prevImage();
       });
-    }
 
-    function renderGallery() {
-      const thumbs = document.getElementById('thumbnails');
-      thumbs.innerHTML = "";
-      galleryItems.forEach((item, index) => {
-        const thumb = document.createElement('div');
-        thumb.className = 'thumbnail';
-        thumb.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
-        thumb.onclick = () => renderImage(index);
-        thumbs.appendChild(thumb);
-      });
-      renderImage(0); // show first image
-    }
-
-    function nextImage() {
+      fetch('assets/manifest.json')
+        .then(res => res.json())
+        .then(data => {
+          galleryItems = data.gallery;
+          renderGallery();
+        })
+        .catch(err => console.error("Error loading manifest:", err));
+    });
+  </script>
+</body>
+</html>
