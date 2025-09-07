@@ -5,6 +5,7 @@
   <title>Gallery</title>
   <style>
     body { font-family: sans-serif; margin: 0; padding: 0; text-align: center; background: #f9f9f9; }
+    h1 { margin: 20px 0; }
     .display img { max-width: 90%; max-height: 500px; margin: 20px auto; border-radius: 8px; transition: opacity 0.5s ease-in-out; }
     .thumbnails { display: flex; justify-content: center; gap: 10px; margin: 20px; flex-wrap: wrap; }
     .thumbnail { cursor: pointer; border: 2px solid transparent; border-radius: 4px; }
@@ -13,63 +14,30 @@
   </style>
 </head>
 <body>
-  <h1>Our Gallery</h1>
+  <h1>Gallery</h1>
   <div id="display" class="display"></div>
   <div id="thumbnails" class="thumbnails"></div>
 
- <script>
-  let galleryItems = [];
-  let currentIndex = 0;
+  <script>
+    let galleryItems = [];
+    let currentIndex = 0;
 
-  function renderImage(index) {
-    const item = galleryItems[index];
-    const display = document.getElementById('display');
+    function renderImage(index) {
+      const item = galleryItems[index];
+      const display = document.getElementById('display');
 
-    // fade-in effect
-    display.innerHTML = `<img src="${item.src}" alt="${item.title}" style="opacity:0;">`;
-    const img = display.querySelector("img");
-    setTimeout(() => img.style.opacity = 1, 50);
+      // fade-in effect
+      display.innerHTML = `<img src="${item.src}" alt="${item.title}" style="opacity:0;">`;
+      const img = display.querySelector("img");
+      setTimeout(() => img.style.opacity = 1, 50);
 
-    currentIndex = index;
+      currentIndex = index;
 
-    // highlight active thumbnail
-    document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
-      thumb.classList.toggle('active', i === index);
-    });
-  }
-
-  function renderGallery() {
-    const thumbs = document.getElementById('thumbnails');
-    thumbs.innerHTML = "";
-    galleryItems.forEach((item, index) => {
-      const thumb = document.createElement('div');
-      thumb.className = 'thumbnail';
-      thumb.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
-      thumb.onclick = () => renderImage(index);
-      thumbs.appendChild(thumb);
-    });
-    renderImage(0); // show first image
-  }
-
-  // keyboard arrow navigation
-  document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowRight') {
-      currentIndex = (currentIndex + 1) % galleryItems.length;
-      renderImage(currentIndex);
-    } else if (event.key === 'ArrowLeft') {
-      currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
-      renderImage(currentIndex);
+      // highlight active thumbnail
+      document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+        thumb.classList.toggle('active', i === index);
+      });
     }
-  });
 
-  // Fetch manifest
-  fetch('assets/manifest.json')
-    .then(response => response.json())
-    .then(data => {
-      galleryItems = data.gallery;
-      renderGallery();
-    })
-    .catch(err => console.error("Error loading manifest:", err));
-</script>
-</body>
-</html>
+    function renderGallery() {
+      const thumbs = document.getElementById('thumbn
