@@ -6,10 +6,65 @@
   <title>Guldaar Basera Homestay</title>
   <link rel="stylesheet" href="assets/style.css">
   <style>
-    /* Book Now button styling */
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 1rem;
+      position: fixed;
+      width: 100%;
+      z-index: 10;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem 0;
+    }
+
+    nav a {
+      margin-right: 1rem;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* Hero video container */
+    .hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+    }
+
+    .hero video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
     .book-btn {
       display: inline-block;
-      margin: 1rem 0;
+      margin-top: 1.5rem;
       padding: 1rem 2rem;
       background-color: #e67e22;
       color: white;
@@ -22,17 +77,18 @@
       background-color: #d35400;
     }
 
-    /* Hero section styling */
-   .hero {
-  height: 80vh;
-  background-image: url('assets/banner.mov'); /* Relative path to the file in your repo */
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
+    main {
+      padding: 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    footer {
+      padding: 1rem;
+      text-align: center;
+      background: #333;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -44,21 +100,29 @@
       <a href="/gb-ranikhet/blog.html">Blog</a>
       <a href="/gb-ranikhet/book.html">Book Now</a>
     </nav>
-
-    <!-- Book Now Button -->
-    <a class="book-btn" href="/gb-ranikhet/book.html">Book Now</a>
   </header>
 
+  <section class="hero">
+    <video autoplay muted loop>
+      <source src="assets/IMG_7047.mov" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="hero-content">
+      <h2>Welcome to Guldaar Basera Homestay</h2>
+      <p>Experience nature, community, and comfort in the hills of Ranikhet.</p>
+      <a class="book-btn" href="/gb-ranikhet/book.html">Book Now</a>
+    </div>
+  </section>
+
   <main>
-    <section class="hero">
-      <h2>Welcome to Guldaar Basera - A luxury hideaway villa in Ranikhet!</h2>
-      <p>Experience wildlife, community, and the comfort in the hills of Kumaon</p>
-      <img src="https://placehold.co/600x300" alt="Homestay photo">
+    <section>
+      <h3>About Us</h3>
+      <p>Discover our workshops, events, and cozy homestay experience in Ranikhet.</p>
     </section>
   </main>
 
   <footer>
-    <p>© 2025 Guldaar Basera Homestay Ranikhet</p>
+    <p>© 2025 Guldaar Basera Homestay</p>
   </footer>
 </body>
 </html>
