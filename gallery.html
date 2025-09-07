@@ -17,7 +17,10 @@
       color: white;
       margin: 0;
     }
+
+    /* Main image area */
     #main-image {
+      position: relative;
       text-align: center;
       margin: 20px auto;
       max-width: 900px;
@@ -28,6 +31,29 @@
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
+
+    /* Arrows */
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 50%;
+      user-select: none;
+    }
+    .arrow:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .arrow-left { left: 10px; }
+    .arrow-right { right: 10px; }
+
+    /* Thumbnails */
     #thumbnails {
       display: flex;
       gap: 10px;
@@ -51,40 +77,71 @@
 <body>
   <h1>Gallery</h1>
 
-  <!-- main carousel display -->
-  <div id="main-image"></div>
+  <!-- main display with arrows -->
+  <div id="main-image">
+    <button class="arrow arrow-left">‹</button>
+    <div id="display"></div>
+    <button class="arrow arrow-right">›</button>
+  </div>
 
   <!-- thumbnails navigation -->
   <div id="thumbnails"></div>
 
   <script>
+    let currentIndex = 0;
+    let galleryItems = [];
+
     async function loadGallery() {
       try {
         const response = await fetch('assets/manifest.json');
         const data = await response.json();
+        galleryItems = data.gallery;
 
-        const mainImage = document.getElementById('main-image');
+        const display = document.getElementById('display');
         const thumbnails = document.getElementById('thumbnails');
 
-        data.gallery.forEach((item, index) => {
-          // Create thumbnail
+        // Function to render current image
+        function renderImage(index) {
+          const item = galleryItems[index];
+          display.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
+          currentIndex = index;
+        }
+
+        // Create thumbnails
+        galleryItems.forEach((item, index) => {
           let thumb = document.createElement('img');
           thumb.src = item.src;
           thumb.alt = item.title;
           thumb.classList.add("thumbnail");
-
-          // On click, load into main view
-          thumb.addEventListener('click', () => {
-            mainImage.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
-          });
-
+          thumb.addEventListener('click', () => renderImage(index));
           thumbnails.appendChild(thumb);
+        });
 
-          // Load first item by default
-          if (index === 0) {
-            mainImage.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
+        // Load first image
+        renderImage(0);
+
+        // Arrow navigation
+        document.querySelector('.arrow-left').addEventListener('click', () => {
+          let newIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+          renderImage(newIndex);
+        });
+        document.querySelector('.arrow-right').addEventListener('click', () => {
+          let newIndex = (currentIndex + 1) % galleryItems.length;
+          renderImage(newIndex);
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') {
+            let newIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+            renderImage(newIndex);
+          }
+          if (e.key === 'ArrowRight') {
+            let newIndex = (currentIndex + 1) % galleryItems.length;
+            renderImage(newIndex);
           }
         });
+
       } catch (e) {
         console.error("Error loading manifest.json:", e);
       }
