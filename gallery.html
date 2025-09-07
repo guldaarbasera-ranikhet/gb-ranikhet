@@ -23,5 +23,50 @@
   <footer>
     <p>© 2025 Guldaar Basera Homestay</p>
   </footer>
+<script>
+  async function loadGallery() {
+    try {
+      const response = await fetch('assets/manifest.json');
+      const data = await response.json();
+
+      const mainImage = document.getElementById('main-image');
+      const thumbnails = document.getElementById('thumbnails');
+
+      data.gallery.forEach((item, index) => {
+        let thumb = document.createElement(item.src.endsWith('.mp4') ? 'video' : 'img');
+        thumb.src = item.src;
+        thumb.classList.add("thumbnail");
+
+        if (item.src.endsWith('.mp4')) {
+          thumb.controls = false;
+          thumb.muted = true;
+        }
+
+        thumb.addEventListener('click', () => {
+          if (item.src.endsWith('.mp4')) {
+            mainImage.innerHTML = `<video src="${item.src}" controls autoplay></video>`;
+          } else {
+            mainImage.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
+          }
+        });
+
+        thumbnails.appendChild(thumb);
+
+        // Load first item by default
+        if (index === 0) {
+          if (item.src.endsWith('.mp4')) {
+            mainImage.innerHTML = `<video src="${item.src}" controls autoplay></video>`;
+          } else {
+            mainImage.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
+          }
+        }
+      });
+    } catch (e) {
+      console.error("Error loading manifest.json:", e);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", loadGallery);
+</script>
 </body>
 </html>
