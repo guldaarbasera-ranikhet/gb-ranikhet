@@ -61,10 +61,7 @@
       user-select: none;
     }
 
-    .arrow:hover {
-      background: rgba(0, 0, 0, 0.7);
-    }
-
+    .arrow:hover { background: rgba(0, 0, 0, 0.7); }
     .arrow.left { left: 10px; }
     .arrow.right { right: 10px; }
   </style>
@@ -73,8 +70,9 @@
   <h1>Gallery</h1>
   <div class="gallery-container">
     <div id="display" class="display"></div>
-    <button class="arrow left" onclick="prevImage()">&#10094;</button>
-    <button class="arrow right" onclick="nextImage()">&#10095;</button>
+    <!-- On-screen arrow buttons -->
+    <button class="arrow left" id="prevBtn">&#10094;</button>
+    <button class="arrow right" id="nextBtn">&#10095;</button>
   </div>
   <div id="thumbnails" class="thumbnails"></div>
 
@@ -113,29 +111,3 @@
     }
 
     function nextImage() {
-      currentIndex = (currentIndex + 1) % galleryItems.length;
-      renderImage(currentIndex);
-    }
-
-    function prevImage() {
-      currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
-      renderImage(currentIndex);
-    }
-
-    // keyboard arrow navigation
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'ArrowRight') nextImage();
-      else if (event.key === 'ArrowLeft') prevImage();
-    });
-
-    // Fetch manifest
-    fetch('assets/manifest.json')
-      .then(response => response.json())
-      .then(data => {
-        galleryItems = data.gallery;
-        renderGallery();
-      })
-      .catch(err => console.error("Error loading manifest:", err));
-  </script>
-</body>
-</html>
