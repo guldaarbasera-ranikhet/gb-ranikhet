@@ -6,16 +6,76 @@
   <style>
     body { font-family: sans-serif; margin: 0; padding: 0; text-align: center; background: #f9f9f9; }
     h1 { margin: 20px 0; }
-    .display img { max-width: 90%; max-height: 500px; margin: 20px auto; border-radius: 8px; transition: opacity 0.5s ease-in-out; }
-    .thumbnails { display: flex; justify-content: center; gap: 10px; margin: 20px; flex-wrap: wrap; }
-    .thumbnail { cursor: pointer; border: 2px solid transparent; border-radius: 4px; }
-    .thumbnail img { width: 100px; height: auto; border-radius: 4px; }
-    .thumbnail.active { border: 3px solid #e67e22; transform: scale(1.05); }
+
+    .gallery-container {
+      position: relative;
+      max-width: 90%;
+      margin: 0 auto;
+    }
+
+    .display img {
+      max-width: 100%;
+      max-height: 500px;
+      margin: 20px auto;
+      border-radius: 8px;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .thumbnails {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px;
+      flex-wrap: wrap;
+    }
+
+    .thumbnail {
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 4px;
+    }
+
+    .thumbnail img {
+      width: 100px;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .thumbnail.active {
+      border: 3px solid #e67e22;
+      transform: scale(1.05);
+    }
+
+    /* Arrow buttons */
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      border-radius: 50%;
+      user-select: none;
+    }
+
+    .arrow:hover {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .arrow.left { left: 10px; }
+    .arrow.right { right: 10px; }
   </style>
 </head>
 <body>
   <h1>Gallery</h1>
-  <div id="display" class="display"></div>
+  <div class="gallery-container">
+    <div id="display" class="display"></div>
+    <button class="arrow left" onclick="prevImage()">&#10094;</button>
+    <button class="arrow right" onclick="nextImage()">&#10095;</button>
+  </div>
   <div id="thumbnails" class="thumbnails"></div>
 
   <script>
@@ -40,4 +100,42 @@
     }
 
     function renderGallery() {
-      const thumbs = document.getElementById('thumbn
+      const thumbs = document.getElementById('thumbnails');
+      thumbs.innerHTML = "";
+      galleryItems.forEach((item, index) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'thumbnail';
+        thumb.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
+        thumb.onclick = () => renderImage(index);
+        thumbs.appendChild(thumb);
+      });
+      renderImage(0); // show first image
+    }
+
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % galleryItems.length;
+      renderImage(currentIndex);
+    }
+
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+      renderImage(currentIndex);
+    }
+
+    // keyboard arrow navigation
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'ArrowRight') nextImage();
+      else if (event.key === 'ArrowLeft') prevImage();
+    });
+
+    // Fetch manifest
+    fetch('assets/manifest.json')
+      .then(response => response.json())
+      .then(data => {
+        galleryItems = data.gallery;
+        renderGallery();
+      })
+      .catch(err => console.error("Error loading manifest:", err));
+  </script>
+</body>
+</html>
