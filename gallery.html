@@ -1,72 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gallery | Guldaar Basera Homestay</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <meta charset="UTF-8">
+  <title>Gallery - Guldaar Basera</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+    }
+    h1 {
+      text-align: center;
+      padding: 1rem;
+      background: #333;
+      color: white;
+      margin: 0;
+    }
+    #main-image {
+      text-align: center;
+      margin: 20px auto;
+      max-width: 900px;
+    }
+    #main-image img {
+      max-width: 100%;
+      max-height: 500px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #thumbnails {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 10px;
+    }
+    .thumbnail {
+      width: 100px;
+      height: 70px;
+      object-fit: cover;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: transform 0.2s;
+    }
+    .thumbnail:hover {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Gallery</h1>
-    <nav>
-  <a href="/gb-ranikhet/index.html">Home</a>
-  <a href="/gb-ranikhet/gallery.html">Gallery</a>
-  <a href="/gb-ranikhet/blog/index.html">Blog</a>
-  <a href="/gb-ranikhet/book.html">Book Now</a>
-</nav>
-  </header>
-  <main>
-    <h2>Our Photos</h2>
-    <p>Coming soon...</p>
-  </main>
-  <footer>
-    <p>© 2025 Guldaar Basera Homestay</p>
-  </footer>
-<script>
-  async function loadGallery() {
-    try {
-      const response = await fetch('assets/manifest.json');
-      const data = await response.json();
+  <h1>Gallery</h1>
 
-      const mainImage = document.getElementById('main-image');
-      const thumbnails = document.getElementById('thumbnails');
+  <!-- main carousel display -->
+  <div id="main-image"></div>
 
-      data.gallery.forEach((item, index) => {
-        let thumb = document.createElement(item.src.endsWith('.mp4') ? 'video' : 'img');
-        thumb.src = item.src;
-        thumb.classList.add("thumbnail");
+  <!-- thumbnails navigation -->
+  <div id="thumbnails"></div>
 
-        if (item.src.endsWith('.mp4')) {
-          thumb.controls = false;
-          thumb.muted = true;
-        }
+  <script>
+    async function loadGallery() {
+      try {
+        const response = await fetch('assets/manifest.json');
+        const data = await response.json();
 
-        thumb.addEventListener('click', () => {
-          if (item.src.endsWith('.mp4')) {
-            mainImage.innerHTML = `<video src="${item.src}" controls autoplay></video>`;
-          } else {
+        const mainImage = document.getElementById('main-image');
+        const thumbnails = document.getElementById('thumbnails');
+
+        data.gallery.forEach((item, index) => {
+          // Create thumbnail
+          let thumb = document.createElement('img');
+          thumb.src = item.src;
+          thumb.alt = item.title;
+          thumb.classList.add("thumbnail");
+
+          // On click, load into main view
+          thumb.addEventListener('click', () => {
+            mainImage.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
+          });
+
+          thumbnails.appendChild(thumb);
+
+          // Load first item by default
+          if (index === 0) {
             mainImage.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
           }
         });
-
-        thumbnails.appendChild(thumb);
-
-        // Load first item by default
-        if (index === 0) {
-          if (item.src.endsWith('.mp4')) {
-            mainImage.innerHTML = `<video src="${item.src}" controls autoplay></video>`;
-          } else {
-            mainImage.innerHTML = `<img src="${item.src}" alt="${item.title}">`;
-          }
-        }
-      });
-    } catch (e) {
-      console.error("Error loading manifest.json:", e);
+      } catch (e) {
+        console.error("Error loading manifest.json:", e);
+      }
     }
-  }
 
-  document.addEventListener("DOMContentLoaded", loadGallery);
-</script>
+    document.addEventListener("DOMContentLoaded", loadGallery);
+  </script>
 </body>
 </html>
