@@ -52,13 +52,13 @@
     }
 
     // Fetch manifest
-    fetch('assets/manifest.json')
-      .then(response => response.json())
-      .then(data => {
-        galleryItems = data.gallery;
-        renderGallery();
-      })
-      .catch(err => console.error("Error loading manifest:", err));
+  fetch('gb-ranikhet/assets/manifest.json')
+  .then(response => response.json())
+  .then(data => {
+    galleryItems = data.gallery;
+    renderGallery();
+  })
+  .catch(err => console.error("Error loading manifest:", err));
   </script>
 </body>
 </html>
